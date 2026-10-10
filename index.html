@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataSiswa ✨ Aplikasi Data Siswa</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+--baby:#a5ddfa;--baby-soft:#e9f8ff;--baby-deep:#6cbce8;
+--mint:#9fe8c3;--mint-soft:#e7faf1;--mint-ink:#1f8a63;
+--yellow:#ffe9a8;--yellow-soft:#fff6d9;
+--pink-soft:#fff0f7;--pink-deep:#ff8fa3;
+--ink:#575380;--muted:#9b95b8;--line:#f0ecfa;
+--head:'Baloo 2','Comic Sans MS','Segoe UI',cursive;
+--body:'Quicksand','Trebuchet MS','Segoe UI',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--body);color:var(--ink);min-height:100vh;background:linear-gradient(160deg,#fffdf8,#f2f9ff 55%,#effbf4) fixed}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+::selection{background:var(--yellow);color:#6b5a1e}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d9d4ee;border-radius:99px;border:2px solid #fffdf8}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---- background blobs pastel ---- */
+.blobs{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55}
+.b1{width:430px;height:430px;background:#cdeffd;top:-130px;left:32%}
+.b2{width:400px;height:400px;background:#fff0c2;bottom:-140px;left:6%}
+.b3{width:380px;height:380px;background:#d8f7e7;top:38%;right:-90px}
+.b4{width:300px;height:300px;background:#ffe3ef;top:-90px;right:22%;opacity:.45}
+
+.layout{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* ---- sidebar clay ---- */
+.sidebar{width:254px;flex-shrink:0;margin:14px 0 14px 14px;padding:24px 16px;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:2px solid #fff;border-radius:32px;box-shadow:0 18px 40px rgba(150,160,205,.16),inset 0 2px 0 #fff,inset 0 -10px 20px rgba(150,160,205,.05);display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:12px;margin:4px 6px 26px}
+.logo{width:48px;height:48px;border-radius:18px;display:grid;place-items:center;font-size:27px;background:linear-gradient(160deg,#cbeeff,#a5ddfa);box-shadow:inset 0 3px 5px rgba(255,255,255,.9),inset 0 -6px 10px rgba(108,188,232,.4),0 10px 18px rgba(165,221,250,.55)}
+.brand-name{font-family:var(--head);font-size:23px;font-weight:800;line-height:1}
+.brand-name em{font-style:normal;color:#3ec9a0}
+.nav-label{font-size:11px;font-weight:800;color:#bdb8dc;letter-spacing:1.8px;margin:20px 12px 8px}
+.nav{display:flex;gap:11px;align-items:center;padding:13px 15px;border-radius:18px;color:#8b86ab;text-decoration:none;margin:5px 0;font-weight:700;font-size:14px;transition:.2s}
+.nav-ico{font-size:19px;width:26px;text-align:center;flex-shrink:0}
+.nav:hover{background:#f7f5fd;color:var(--ink);transform:translateX(3px)}
+.nav.active{background:linear-gradient(160deg,#e7faf1,#d9f6e8);color:#20946b;box-shadow:inset 0 2px 0 #fff,0 8px 18px rgba(120,220,180,.3)}
+.sidebar-note{margin-top:auto;padding:16px;border-radius:22px;background:linear-gradient(160deg,#fff8e3,#ffefc4);font-size:12px;font-weight:600;color:#8f814f;line-height:1.65;box-shadow:inset 0 2px 0 #fff,0 10px 20px rgba(245,207,94,.28)}
+.sidebar-note strong{font-family:var(--head);color:#7c6d3c}
+
+/* ---- topbar ---- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{margin:14px 14px 0 0;height:70px;flex-shrink:0;background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:2px solid #fff;border-radius:26px;box-shadow:0 14px 30px rgba(150,160,205,.14),inset 0 2px 0 #fff;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.crumb{font-size:13px;color:var(--muted);font-weight:700}
+.crumb strong{color:var(--ink)}
+.profile{display:flex;align-items:center;gap:11px;font-size:13.5px;font-weight:800}
+.profile small{display:block;color:var(--muted);font-weight:700;font-size:11px}
+.avatar{width:46px;height:46px;border-radius:18px;display:grid;place-items:center;font-size:25px;background:linear-gradient(160deg,#eaf8ff,#cbeeff);box-shadow:inset 0 3px 4px rgba(255,255,255,.9),inset 0 -5px 8px rgba(108,188,232,.35),0 8px 16px rgba(165,221,250,.5)}
+.content{max-width:1330px;width:100%;margin:auto;flex:1;padding:26px 32px 44px}
+
+/* ---- hero / welcome ---- */
+.welcome{position:relative;display:flex;justify-content:space-between;align-items:center;gap:22px;flex-wrap:wrap;margin-bottom:24px;padding:28px 32px;border-radius:32px;background:linear-gradient(140deg,#fffdf6,#eaf8ff 55%,#e7faf1);box-shadow:0 18px 40px rgba(150,160,205,.15),inset 0 2px 0 #fff;overflow:hidden}
+.welcome::before{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,#ffffffcc,transparent 70%);top:-100px;right:-70px}
+.welcome::after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,#ffffffb3,transparent 70%);bottom:-70px;left:-40px}
+.eyebrow{color:#3ec9a0;font-weight:800;font-size:12px;letter-spacing:1.6px;text-transform:uppercase}
+.welcome h1{font-family:var(--head);font-size:31px;margin:8px 0 6px;line-height:1.15}
+.welcome p{margin:0;color:var(--muted);font-size:14px;font-weight:600}
+.hero-text,.hero-side{position:relative;z-index:1}
+.hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.date-pill{padding:10px 18px;border-radius:999px;background:#fff;border:2px solid var(--line);color:#7b76a0;font-size:13px;font-weight:800;box-shadow:0 8px 18px rgba(180,170,220,.22)}
+.hero-chip{display:flex;align-items:center;gap:14px;padding:12px 22px 12px 12px;background:#fff;border-radius:26px;box-shadow:0 14px 30px rgba(150,160,205,.18),inset 0 2px 0 #fff}
+.hero-chip strong{font-family:var(--head);font-size:16px;display:block;line-height:1.2}
+.hero-chip small{color:var(--muted);font-weight:700;font-size:11.5px}
+.fi{position:absolute;z-index:2;pointer-events:none;filter:drop-shadow(0 12px 10px rgba(91,86,115,.25));animation:bob 5s ease-in-out infinite}
+.fi1{top:18px;left:30px;font-size:36px}
+.fi2{bottom:18px;left:130px;font-size:26px;animation-delay:-1.6s;animation-duration:5.6s}
+.fi3{bottom:16px;right:44px;font-size:30px;animation-delay:-2.8s}
+.fi4{top:10px;left:46%;font-size:22px;animation-delay:-.8s;animation-duration:4.4s}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-12px) rotate(10deg)}}
+
+/* ---- statistik ---- */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:22px}
+.stat{border-radius:28px;padding:20px 22px;transition:transform .2s;animation:pop .45s ease}
+.stat:hover{transform:translateY(-5px) rotate(-.5deg)}
+.stat-top{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:800;color:#8a85ad}
+.stat-ico{width:46px;height:46px;border-radius:18px;display:grid;place-items:center;font-size:25px;background:rgba(255,255,255,.85);box-shadow:inset 0 2px 0 #fff,0 10px 20px rgba(160,170,210,.22)}
+.stat strong{display:block;font-family:var(--head);font-size:34px;margin:12px 0 4px;line-height:1}
+.stat small{font-size:12px;font-weight:700;color:#a9a4c6}
+.s-blue{background:linear-gradient(160deg,#f6fdff,#dff2ff);box-shadow:0 16px 34px rgba(160,205,240,.3),inset 0 2px 0 #fff}
+.s-mint{background:linear-gradient(160deg,#f4fdf8,#dcf8ea);box-shadow:0 16px 34px rgba(150,220,190,.32),inset 0 2px 0 #fff}
+.s-yellow{background:linear-gradient(160deg,#fffdf2,#fff3cf);box-shadow:0 16px 34px rgba(245,215,140,.34),inset 0 2px 0 #fff}
+.s-pink{background:linear-gradient(160deg,#fffafc,#ffeef6);box-shadow:0 16px 34px rgba(255,180,205,.32),inset 0 2px 0 #fff}
+
+/* ---- panel & tombol ---- */
+.panel{background:#fff;border-radius:30px;padding:26px;box-shadow:0 18px 40px rgba(150,160,205,.13),inset 0 2px 0 #fff;margin-bottom:20px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.panel h2{font-family:var(--head);font-size:20px;margin:0;line-height:1.2}
+.sub{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:5px}
+.lead{line-height:1.8;color:#7d78a0;font-size:14px;font-weight:600}
+.btn{border:0;border-radius:18px;padding:12px 20px;font-weight:800;font-size:13px;display:inline-flex;align-items:center;gap:8px;transition:transform .16s,box-shadow .16s;line-height:1}
+.primary{background:linear-gradient(180deg,#b3e2fb,#8ed2f4);color:#155d84;box-shadow:0 6px 0 #6cbce8,0 16px 26px rgba(140,205,245,.42),inset 0 2px 0 rgba(255,255,255,.75)}
+.primary:hover{transform:translateY(-2px);box-shadow:0 8px 0 #6cbce8,0 20px 30px rgba(140,205,245,.48),inset 0 2px 0 rgba(255,255,255,.75)}
+.primary:active{transform:translateY(4px);box-shadow:0 2px 0 #6cbce8,0 8px 14px rgba(140,205,245,.36),inset 0 2px 0 rgba(255,255,255,.6)}
+.secondary{background:linear-gradient(180deg,#fff,#f4f1fb);color:#6c678f;box-shadow:0 5px 0 #ddd7ee,0 12px 22px rgba(190,185,225,.35),inset 0 2px 0 #fff}
+.secondary:hover{transform:translateY(-2px)}
+.secondary:active{transform:translateY(3px);box-shadow:0 2px 0 #ddd7ee,0 6px 12px rgba(190,185,225,.3)}
+.danger{background:linear-gradient(180deg,#ffb3c1,#ff9aa8);color:#8f2337;box-shadow:0 6px 0 #f2849a,0 16px 26px rgba(255,160,180,.4)}
+.danger:active{transform:translateY(4px);box-shadow:0 2px 0 #f2849a}
+.btn:focus-visible,.icon-btn:focus-visible{outline:3px solid #a5dcff;outline-offset:2px}
+.search{padding:12px 18px;border:2px solid #eceafc;border-radius:999px;width:270px;outline:none;background:#fff;font-weight:700;color:var(--ink);box-shadow:inset 0 3px 6px rgba(150,160,205,.08);transition:.18s}
+
+/* ---- tabel ---- */
+.table-wrap{overflow-x:auto;border-radius:20px}
+.table-wrap table{min-width:680px}
+table{width:100%;border-collapse:separate;border-spacing:0 10px;font-size:13.5px}
+th{text-align:left;color:#9c96bd;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;padding:6px 16px;font-weight:800}
+td{padding:14px 16px;background:#fbfaff;border-top:2px solid #f2effc;border-bottom:2px solid #f2effc;vertical-align:middle}
+td:first-child{border-left:2px solid #f2effc;border-radius:20px 0 0 20px}
+td:last-child{border-right:2px solid #f2effc;border-radius:0 20px 20px 0}
+tbody tr{transition:.18s}
+tbody tr:hover td{background:#f2fbff;border-color:#d9f0fe}
+.student{display:flex;align-items:center;gap:12px;font-weight:800}
+.chibi{width:42px;height:42px;border-radius:16px;display:grid;place-items:center;font-size:23px;flex-shrink:0;box-shadow:inset 0 3px 4px rgba(255,255,255,.95),inset 0 -5px 8px rgba(120,130,175,.16),0 8px 16px rgba(150,160,210,.22)}
+.chibi.big{width:60px;height:60px;border-radius:22px;font-size:34px}
+.a-blue{background:linear-gradient(160deg,#eaf8ff,#cbeeff)}
+.a-mint{background:linear-gradient(160deg,#effdf5,#d5f7e7)}
+.a-yellow{background:linear-gradient(160deg,#fffdf0,#ffeeb8)}
+.a-pink{background:linear-gradient(160deg,#fffafc,#ffe3ef)}
+.tag{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;background:#e2f9ee;color:var(--mint-ink);font-size:11.5px;font-weight:800;box-shadow:inset 0 2px 0 #fff}
+.tag::before{content:"";width:7px;height:7px;border-radius:50%;background:#31c98d;box-shadow:0 0 0 3px #cdf4e2}
+.actions{display:flex;gap:10px}
+.icon-btn{border:0;border-radius:14px;padding:9px 11px;font-size:16px;line-height:1;background:#fff;box-shadow:0 4px 0 #ece8f8,0 10px 16px rgba(180,175,220,.22);transition:transform .15s,box-shadow .15s}
+.icon-btn:hover{transform:translateY(-2px)}
+.icon-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #ece8f8,0 5px 10px rgba(180,175,220,.2)}
+.icon-btn.edit{background:#eaf8ff}
+.icon-btn.del{background:#fff0f5}
+.empty{text-align:center;padding:34px;color:var(--muted);font-weight:700}
+
+/* ---- formulir ---- */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.field{display:flex;flex-direction:column;gap:9px}
+.field.full{grid-column:1/-1}
+.field>label,.group-label{font-size:13.5px;font-weight:800;color:#4c4770}
+.required{color:var(--pink-deep)}
+.hint{font-size:11px;color:#a9a4c6;font-weight:700}
+input[type=text],input[type=number],select,textarea{width:100%;padding:13px 16px;border:2px solid #eceafc;border-radius:18px;background:#fff;color:var(--ink);outline:none;font-size:13.5px;font-weight:600;box-shadow:inset 0 3px 6px rgba(150,160,205,.08);transition:.18s}
+textarea{resize:vertical;min-height:110px;border-radius:20px}
+select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9'><path d='M2 2l5 5 5-5' fill='none' stroke='%239c96bd' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 18px center;padding-right:44px;cursor:pointer}
+input::placeholder,textarea::placeholder{color:#b9b4d3;font-weight:600}
+input:focus,select:focus,textarea:focus,.search:focus{border-color:#a5dcff;box-shadow:0 0 0 4px #e4f5ff,inset 0 3px 6px rgba(150,160,205,.08)}
+.choice-row{display:flex;gap:14px;flex-wrap:wrap;padding:4px 0}
+.choice{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:700;color:#6c678f;background:#fbfaff;border:2px solid #f2effc;border-radius:999px;padding:10px 18px;cursor:pointer;transition:.18s;user-select:none}
+.choice:hover{border-color:#cbeeff;background:#f4fcff;color:var(--ink)}
+.choice input{accent-color:#6cbce8;width:17px;height:17px;cursor:pointer}
+.form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:24px;padding-top:22px;border-top:2px dashed #eee9f8;flex-wrap:wrap}
+.notice{display:flex;align-items:center;gap:10px;padding:15px 20px;background:#e2f9ee;color:var(--mint-ink);border-radius:20px;font-weight:800;font-size:13px;margin-bottom:18px;box-shadow:inset 0 2px 0 #fff,0 12px 24px rgba(120,220,180,.25);animation:pop .35s ease both}
+.hidden{display:none!important}
+
+/* ---- kartu langkah, about, footer ---- */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+.step{border-radius:24px;padding:20px;box-shadow:inset 0 2px 0 #fff}
+.step strong{font-family:var(--head);font-size:16px;display:block;margin-bottom:5px}
+.step p{margin:0;color:var(--muted);font-size:13px;font-weight:600;line-height:1.6}
+.step-num{display:inline-block;font-family:var(--head);font-weight:800;font-size:13px;background:#fff;border-radius:12px;padding:4px 12px;margin-bottom:10px;box-shadow:0 6px 12px rgba(160,170,210,.2)}
+.s1{background:linear-gradient(160deg,#fffdf2,#fff3cf)}.s1 .step-num{color:#d9a520}
+.s2{background:linear-gradient(160deg,#f4fdf8,#dcf8ea)}.s2 .step-num{color:#1f9e73}
+.gui-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:14px}
+.gui{background:#fbfaff;border:2px solid #f2effc;border-radius:20px;padding:16px}
+.gui span{font-size:24px;display:block}
+.gui strong{font-family:var(--head);display:block;margin:8px 0 4px;font-size:15px}
+.gui p{margin:0;color:var(--muted);font-size:12px;font-weight:600;line-height:1.5}
+.palette{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px}
+.pd{display:flex;align-items:center;gap:10px;font-weight:800;font-size:12.5px;color:#6c678f;background:#fbfaff;border:2px solid #f2effc;border-radius:999px;padding:8px 16px 8px 9px}
+.pd i{width:28px;height:28px;border-radius:10px;display:block;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(120,130,175,.18)}
+.footer{text-align:center;font-size:12px;color:#a9a4c4;padding:16px 0 6px;font-weight:700}
+
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+section[id^="page-"]{animation:pop .4s ease both}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ---- responsif ---- */
+@media(max-width:1080px){.stats{grid-template-columns:repeat(2,1fr)}.content{padding:24px 22px 40px}}
+@media(max-width:900px){.fi{display:none}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.steps{grid-template-columns:1fr}}
+@media(max-width:760px){
+.sidebar{width:80px;margin:10px 0 10px 10px;padding:18px 10px}
+.brand{justify-content:center;margin:0 0 20px}
+.brand-name,.nav-txt,.nav-label,.sidebar-note{display:none}
+.nav{justify-content:center;padding:13px 0;margin:4px 0}
+.topbar{margin:10px 10px 0 0;height:62px;padding:0 18px;border-radius:22px}
+.content{padding:18px 12px 34px}
+.welcome{flex-direction:column;align-items:flex-start;padding:22px 20px}
+.welcome h1{font-size:25px}
+.hero-side{flex-direction:row;align-items:center;width:100%;justify-content:space-between}
+.search{width:100%}
+.panel{padding:18px;border-radius:26px;overflow-x:auto}
+.panel-head{flex-direction:column;align-items:stretch}
+.panel-head .btn{justify-content:center}
+.stat{padding:16px}.stat strong{font-size:28px}
+.gui-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="blobs" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">🎓</div><span class="brand-name">Data<em>Siswa</em></span></div>
+  <div class="nav-label">✿ MENU UTAMA</div>
+  <a href="#" class="nav active" data-page="dashboard"><span class="nav-ico">🏠</span><span class="nav-txt">Dashboard</span></a>
+  <a href="#" class="nav" data-page="students"><span class="nav-ico">📋</span><span class="nav-txt">Data Siswa</span></a>
+  <a href="#" class="nav" data-page="form"><span class="nav-ico">✏️</span><span class="nav-txt">Input Data Siswa</span></a>
+  <div class="nav-label">✿ LAINNYA</div>
+  <a href="#" class="nav" data-page="about"><span class="nav-ico">💡</span><span class="nav-txt">Tentang Aplikasi</span></a>
+  <div class="sidebar-note"><strong>💛 DataSiswa</strong><br>Dummy UI aplikasi data siswa untuk projek perancangan GUI. Data hanya tersimpan di browser ini.</div>
+</aside>
+<main class="main">
+<header class="topbar">
+  <div class="crumb">🏠 Workspace / <strong id="crumb">Dashboard</strong></div>
+  <div class="profile"><div class="avatar">🧑‍🏫</div><div><div>Admin Data</div><small>Administrator ✨</small></div></div>
+</header>
+<div class="content">
+
+<section id="page-dashboard">
+  <div class="welcome hero">
+    <span class="fi fi1" aria-hidden="true">📚</span>
+    <span class="fi fi2" aria-hidden="true">⭐</span>
+    <span class="fi fi3" aria-hidden="true">✏️</span>
+    <span class="fi fi4" aria-hidden="true">🌟</span>
+    <div class="hero-text">
+      <div class="eyebrow">✨ Student Management System</div>
+      <h1>Selamat datang, Admin! 👋</h1>
+      <p>Kelola data siswa dengan cara yang lucu, rapi, dan menyenangkan ✨</p>
+    </div>
+    <div class="hero-side">
+      <div class="date-pill">🗓️ Tahun Ajaran 2026/2027</div>
+      <div class="hero-chip"><div class="chibi big a-yellow">🧑‍🎓</div><div><strong>Admin Data</strong><small>Administrator</small></div></div>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat s-yellow"><div class="stat-top">Total Siswa <span class="stat-ico">🎒</span></div><strong id="stat-total">4</strong><small>Data siswa terdaftar</small></div>
+    <div class="stat s-blue"><div class="stat-top">Laki-laki <span class="stat-ico">🧑‍🎓</span></div><strong id="stat-male">2</strong><small>Berdasarkan jenis kelamin</small></div>
+    <div class="stat s-pink"><div class="stat-top">Perempuan <span class="stat-ico">👩‍🎓</span></div><strong id="stat-female">2</strong><small>Berdasarkan jenis kelamin</small></div>
+    <div class="stat s-mint"><div class="stat-top">Jumlah Kelas <span class="stat-ico">🏫</span></div><strong id="stat-classes">4</strong><small>Kelas yang terwakili</small></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>📖 Siswa Terdaftar</h2><div class="sub">Ringkasan data siswa terbaru</div></div><button class="btn primary" onclick="showPage('form')">✨ Tambah Siswa</button></div>
+    <div class="table-wrap"><table><thead><tr><th>Nama Siswa</th><th>NIS</th><th>Kelas</th><th>Jenis Kelamin</th><th>Hobi</th><th>Status</th></tr></thead><tbody id="recent-body"></tbody></table></div>
+  </div>
+  <div class="panel">
+    <h2>✨ Alur Penggunaan</h2><div class="sub" style="margin-bottom:16px">Mockup interaktif untuk demonstrasi GUI</div>
+    <div class="steps">
+      <div class="step s1"><span class="step-num">01</span><strong>👀 Lihat Data</strong><p>Periksa daftar siswa melalui menu Data Siswa.</p></div>
+      <div class="step s2"><span class="step-num">02</span><strong>📝 Tambahkan Data</strong><p>Isi formulir menggunakan komponen GUI yang tersedia.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="page-students" class="hidden">
+  <div id="notice" class="notice hidden"></div>
+  <div class="welcome">
+    <div><div class="eyebrow">📚 Database Siswa</div><h1>Data Siswa</h1><p>Lihat, cari, edit, dan hapus data siswa dengan mudah.</p></div>
+    <button class="btn primary" onclick="resetForm();showPage('form')">✨ Tambah Siswa</button>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>📋 Daftar Seluruh Siswa</h2><div class="sub">Gunakan pencarian untuk menemukan siswa.</div></div><input class="search" id="search" placeholder="🔍 Cari nama atau NIS..." oninput="renderStudents()"></div>
+    <div class="table-wrap"><table><thead><tr><th>Nama Siswa</th><th>NIS</th><th>Kelas</th><th>Jenis Kelamin</th><th>Hobi</th><th>Aksi</th></tr></thead><tbody id="students-body"></tbody></table></div>
+    <div id="count-label" class="sub" style="margin-top:16px"></div>
+  </div>
+</section>
+
+<section id="page-form" class="hidden">
+  <div class="welcome">
+    <div><div class="eyebrow">📝 Formulir Data</div><h1 id="form-title">Tambah Data Siswa</h1><p>Lengkapi informasi di bawah ini dengan benar ya! 🙏</p></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>✨ Informasi Siswa</h2><div class="sub">Kolom bertanda <span class="required">*</span> wajib diisi.</div></div></div>
+    <form id="student-form">
+    <input type="hidden" id="edit-id">
+    <div class="form-grid">
+      <div class="field"><label for="nama">👤 Nama Lengkap <span class="required">*</span></label><input type="text" id="nama" placeholder="Contoh: Aurora Ditria" required></div>
+      <div class="field"><label for="nis">🔖 Nomor Induk Siswa (NIS) <span class="required">*</span></label><input type="text" id="nis" placeholder="Contoh: 2026001" required></div>
+      <div class="field"><span class="group-label">🚻 Jenis Kelamin <span class="required">*</span></span><div class="choice-row"><label class="choice"><input type="radio" name="gender" value="Laki-laki" required> 🧑‍🎓 Laki-laki</label><label class="choice"><input type="radio" name="gender" value="Perempuan"> 👩‍🎓 Perempuan</label></div></div>
+      <div class="field"><label for="kelas">🏫 Kelas <span class="required">*</span></label><select id="kelas" required><option value="">Pilih kelas</option><option value="X RPL 1">X RPL 1</option><option value="X RPL 2">X RPL 2</option><option value="XI RPL 1">XI RPL 1</option><option value="XI RPL 2">XI RPL 2</option><option value="XII RPL 1">XII RPL 1</option><option value="XII RPL 2">XII RPL 2</option><option value="XII DKV 1">XII DKV 1</option></select></div>
+      <div class="field full"><span class="group-label">🎨 Hobi <span class="hint">(boleh pilih lebih dari satu)</span></span><div class="choice-row"><label class="choice"><input type="checkbox" name="hobi" value="Membaca"> 📖 Membaca</label><label class="choice"><input type="checkbox" name="hobi" value="Olahraga"> ⚽ Olahraga</label><label class="choice"><input type="checkbox" name="hobi" value="Musik"> 🎵 Musik</label><label class="choice"><input type="checkbox" name="hobi" value="Menggambar"> 🎨 Menggambar</label><label class="choice"><input type="checkbox" name="hobi" value="Coding"> 💻 Coding</label></div></div>
+      <div class="field full"><label for="alamat">🏠 Alamat <span class="required">*</span></label><textarea id="alamat" placeholder="Masukkan alamat lengkap siswa..." required></textarea></div>
+    </div>
+    <div class="form-actions"><button type="button" class="btn secondary" onclick="resetForm()">🔄 Reset Form</button><button type="submit" class="btn primary">💾 Simpan Data</button></div>
+    </form>
+  </div>
+</section>
+
+<section id="page-about" class="hidden">
+  <div class="welcome"><div><div class="eyebrow">💛 Informasi Projek</div><h1>Tentang Data Siswa</h1><p>Rancangan antarmuka aplikasi pengelolaan data siswa yang lucu & ramah.</p></div></div>
+  <div class="panel">
+    <h2>🌈 Tujuan Aplikasi</h2>
+    <p class="lead" style="margin:10px 0 0">Aplikasi ini dirancang untuk membantu guru dan tenaga pendidik mengelola data siswa melalui antarmuka yang sederhana, rapi, konsisten, dan menyenangkan.</p>
+    <h2 style="margin-top:26px">🧩 Komponen GUI yang Diterapkan</h2>
+    <div class="gui-grid">
+      <div class="gui"><span>🏷️</span><strong>Label</strong><p>Memberi keterangan pada setiap input.</p></div>
+      <div class="gui"><span>⌨️</span><strong>Text Field</strong><p>Mengisi nama dan NIS siswa.</p></div>
+      <div class="gui"><span>🔘</span><strong>Radio Button</strong><p>Memilih satu jenis kelamin.</p></div>
+      <div class="gui"><span>▾</span><strong>Combo Box</strong><p>Memilih kelas siswa.</p></div>
+      <div class="gui"><span>☑️</span><strong>Checkbox</strong><p>Memilih beberapa hobi.</p></div>
+      <div class="gui"><span>📝</span><strong>Text Area</strong><p>Mengisi alamat siswa.</p></div>
+      <div class="gui"><span>🖱️</span><strong>Button</strong><p>Menyimpan atau mereset formulir.</p></div>
+    </div>
+    <h2 style="margin-top:26px">🌸 Palet Warna</h2>
+    <div class="palette">
+      <span class="pd"><i style="background:linear-gradient(160deg,#dff2ff,#a5ddfa)"></i> Baby Blue</span>
+      <span class="pd"><i style="background:linear-gradient(160deg,#e7faf1,#9fe8c3)"></i> Mint Green</span>
+      <span class="pd"><i style="background:linear-gradient(160deg,#fffdf2,#ffe9a8)"></i> Pastel Yellow</span>
+      <span class="pd"><i style="background:linear-gradient(160deg,#fffdf8,#fff3e0)"></i> Soft Cream</span>
+    </div>
+  </div>
+</section>
+
+<div class="footer">© 2026 DataSiswa · Dibuat dengan 💛 untuk projek perancangan aplikasi data siswa</div>
+</div>
+</main>
+</div>
+<script>
+const seed=[
+{id:1,nama:"Nadia Putri",nis:"2026001",kelas:"XII RPL 1",gender:"Perempuan",hobi:["Membaca","Musik"],alamat:"Surabaya"},
+{id:2,nama:"Rizky Pratama",nis:"2026002",kelas:"XII RPL 1",gender:"Laki-laki",hobi:["Coding","Olahraga"],alamat:"Sidoarjo"},
+{id:3,nama:"Alya Safitri",nis:"2026003",kelas:"XI RPL 1",gender:"Perempuan",hobi:["Menggambar"],alamat:"Surabaya"},
+{id:4,nama:"Fajar Ramadhan",nis:"2026004",kelas:"XI RPL 2",gender:"Laki-laki",hobi:["Olahraga","Musik"],alamat:"Gresik"}
+];
+let students=seed.map(s=>({...s,hobi:[...s.hobi]}));let nextId=5;let noticeTimer;
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function avatar(s,i){const e=s.gender==="Laki-laki"?"🧑‍🎓":"👩‍🎓";const c=["a-blue","a-mint","a-yellow","a-pink"][i%4];return `<div class="chibi ${c}">${e}</div>`}
+function updateStats(){document.getElementById("stat-total").textContent=students.length;document.getElementById("stat-male").textContent=students.filter(s=>s.gender==="Laki-laki").length;document.getElementById("stat-female").textContent=students.filter(s=>s.gender==="Perempuan").length;document.getElementById("stat-classes").textContent=new Set(students.map(s=>s.kelas)).size}
+function renderRecent(){document.getElementById("recent-body").innerHTML=students.slice(-5).reverse().map((s,i)=>`<tr><td><div class="student">${avatar(s,i)}<span>${esc(s.nama)}</span></div></td><td>${esc(s.nis)}</td><td>${esc(s.kelas)}</td><td>${esc(s.gender)}</td><td>${esc(s.hobi.join(", ")||"—")}</td><td><span class="tag">Aktif</span></td></tr>`).join("")||`<tr><td colspan="6" class="empty">🐣 Belum ada data siswa.</td></tr>`}
+function renderStudents(){const q=(document.getElementById("search")?.value||"").toLowerCase();const list=students.filter(s=>(s.nama+" "+s.nis).toLowerCase().includes(q));document.getElementById("students-body").innerHTML=list.map((s,i)=>`<tr><td><div class="student">${avatar(s,i)}<span>${esc(s.nama)}</span></div></td><td>${esc(s.nis)}</td><td>${esc(s.kelas)}</td><td>${esc(s.gender)}</td><td>${esc(s.hobi.join(", ")||"—")}</td><td><div class="actions"><button class="icon-btn edit" title="Edit data" onclick="editStudent(${s.id})">✏️</button><button class="icon-btn del" title="Hapus data" onclick="deleteStudent(${s.id})">🗑️</button></div></td></tr>`).join("")||`<tr><td colspan="6" class="empty">🔍 Data tidak ditemukan.</td></tr>`;document.getElementById("count-label").textContent=`Menampilkan ${list.length} dari ${students.length} data siswa ✨`}
+function refresh(){updateStats();renderRecent();renderStudents()}
+function flashNotice(msg){const n=document.getElementById("notice");n.textContent=msg;n.classList.remove("hidden");clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>n.classList.add("hidden"),4500)}
+function showPage(page){document.querySelectorAll('[id^="page-"]').forEach(e=>e.classList.add("hidden"));document.getElementById("page-"+page).classList.remove("hidden");document.querySelectorAll(".nav").forEach(a=>a.classList.toggle("active",a.dataset.page===page));const names={dashboard:"Dashboard",students:"Data Siswa",form:"Input Data Siswa",about:"Tentang Aplikasi"};document.getElementById("crumb").textContent=names[page];if(page==="students")renderStudents();window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll(".nav").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();if(a.dataset.page==="form")resetForm();showPage(a.dataset.page)}));
+function resetForm(){document.getElementById("student-form").reset();document.getElementById("edit-id").value="";document.getElementById("form-title").textContent="Tambah Data Siswa"}
+function editStudent(id){const s=students.find(x=>x.id===id);if(!s)return;resetForm();document.getElementById("edit-id").value=s.id;document.getElementById("nama").value=s.nama;document.getElementById("nis").value=s.nis;document.getElementById("kelas").value=s.kelas;document.getElementById("alamat").value=s.alamat;document.querySelector(`input[name="gender"][value="${s.gender}"]`).checked=true;document.querySelectorAll('input[name="hobi"]').forEach(c=>c.checked=s.hobi.includes(c.value));document.getElementById("form-title").textContent="Edit Data Siswa";showPage("form")}
+function deleteStudent(id){const s=students.find(x=>x.id===id);if(s&&confirm(`Hapus data ${s.nama}? 🥺`)){students=students.filter(x=>x.id!==id);refresh();flashNotice(`🗑️ Data ${s.nama} berhasil dihapus (simulasi).`)}}
+document.getElementById("student-form").addEventListener("submit",e=>{e.preventDefault();let id=Number(document.getElementById("edit-id").value);let nama=document.getElementById("nama").value.trim(),nis=document.getElementById("nis").value.trim();if(students.some(s=>s.nis===nis&&s.id!==id)){alert("⚠️ NIS sudah digunakan. Masukkan NIS yang berbeda ya.");return}let gender=document.querySelector('input[name="gender"]:checked')?.value;if(!gender){alert("Pilih jenis kelamin dulu ya 🙏");return}const data={id:id||nextId++,nama,nis,kelas:document.getElementById("kelas").value,gender,hobi:[...document.querySelectorAll('input[name="hobi"]:checked')].map(c=>c.value),alamat:document.getElementById("alamat").value.trim()};if(id)students=students.map(s=>s.id===id?data:s);else students.push(data);refresh();flashNotice(id?"🎉 Data siswa berhasil diperbarui (simulasi).":"🎉 Data siswa berhasil disimpan (simulasi).");resetForm();showPage("students")});
+refresh();
+</script>
+</body>
+</html>
